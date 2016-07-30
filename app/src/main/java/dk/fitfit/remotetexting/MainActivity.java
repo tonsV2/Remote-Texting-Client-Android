@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -24,8 +25,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        String serverClientId = "591997811673-8d8ipbtgbodbkovou20a57gcprk6beoo.apps.googleusercontent.com";
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
+                .requestIdToken(serverClientId)
                 .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -60,6 +63,20 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private void handleSignInResult(GoogleSignInResult result) {
         String msg = "handleSignInResult:" + result.isSuccess();
         Log.d(TAG, msg);
+        toast(msg);
+        if (result.isSuccess()) {
+            // Signed in successfully, show authenticated UI.
+            GoogleSignInAccount acct = result.getSignInAccount();
+            String email = acct.getEmail();
+            String idToken = acct.getIdToken();
+            toast(email);
+            toast(idToken);
+        } else {
+            // Signed out, show unauthenticated UI.
+        }
+    }
+
+    private void toast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
