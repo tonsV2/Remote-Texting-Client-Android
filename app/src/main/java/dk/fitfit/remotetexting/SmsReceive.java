@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.telephony.SmsMessage;
 import android.widget.Toast;
 
+import dk.fitfit.remotetexting.utils.SharedStorage;
+
 
 public class SmsReceive extends BroadcastReceiver {
     private final String format = "3gpp";
@@ -17,16 +19,22 @@ public class SmsReceive extends BroadcastReceiver {
         if (extras != null) {
             Object[] pdus = (Object[])extras.get("pdus");
             String msg = "";
-            for (Object smsMessage : pdus) {
-                SmsMessage message;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    message = SmsMessage.createFromPdu((byte[]) smsMessage, format);
-                } else {
-                    message = SmsMessage.createFromPdu((byte[]) smsMessage);
+            if (pdus != null) {
+                for (Object smsMessage : pdus) {
+                    SmsMessage message;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        message = SmsMessage.createFromPdu((byte[]) smsMessage, format);
+                    } else {
+                        message = SmsMessage.createFromPdu((byte[]) smsMessage);
+                    }
+                    msg += message.getMessageBody();
                 }
-                msg += message.getMessageBody();
+            } else {
+                // TODO
             }
             toast(context, msg);
+            String idToken = SharedStorage.load(context, SharedStorage.STORAGE_KEY_ID_TOKEN);
+            toast(context, idToken);
         }
     }
 

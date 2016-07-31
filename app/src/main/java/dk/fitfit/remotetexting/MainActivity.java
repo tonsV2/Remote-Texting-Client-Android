@@ -14,6 +14,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import dk.fitfit.remotetexting.utils.SharedStorage;
+
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener{
     private static final String TAG = "SignInActivity";
@@ -67,9 +69,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            String email = acct.getEmail();
+//            String email = acct.getEmail();
             String idToken = acct.getIdToken();
-            toast(email);
+
+            // TODO: Handle error... eg. empty idToken
+            SharedStorage.save(this, SharedStorage.STORAGE_KEY_ID_TOKEN, idToken);
+//            toast(email);
             toast(idToken);
         } else {
             // Signed out, show unauthenticated UI.
