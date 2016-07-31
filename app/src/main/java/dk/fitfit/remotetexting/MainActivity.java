@@ -3,7 +3,6 @@ package dk.fitfit.remotetexting;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -24,7 +23,6 @@ import dk.fitfit.remotetexting.utils.SharedStorage;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = "SignInActivity";
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
 
@@ -77,21 +75,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
-        String msg = "handleSignInResult:" + result.isSuccess();
-        Log.d(TAG, msg);
-        toast(msg);
         if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-//            String email = acct.getEmail();
             String idToken = acct.getIdToken();
-
             // TODO: Handle error... eg. empty idToken
             SharedStorage.save(this, SharedStorage.STORAGE_KEY_ID_TOKEN, idToken);
-//            toast(email);
-            toast(idToken);
         } else {
-            // Signed out, show unauthenticated UI.
+            toast("Sign in failed!!!");
         }
     }
 
