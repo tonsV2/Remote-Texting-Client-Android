@@ -2,6 +2,7 @@ package dk.fitfit.remotetexting;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
@@ -12,6 +13,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.json.gson.GsonFactory;
 
@@ -19,26 +22,63 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import dk.fitfit.remotetexting.service.BackendService;
 import dk.fitfit.remotetexting.utils.SharedStorage;
+
+import static android.view.View.GONE;
+import static android.view.View.OnClickListener;
+import static android.view.View.VISIBLE;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
+    private BackendService backendService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         configureGoogleApiClient();
+        silentSignin();
+    }
 
-        findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                signIn();
-            }
-        });
+    private void silentSignin() {
+        // https://developers.google.com/android/reference/com/google/android/gms/auth/api/signin/GoogleSignInApi#silentSignIn(com.google.android.gms.common.api.GoogleApiClient)
+        OptionalPendingResult<GoogleSignInResult> pendingResult = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        if (pendingResult.isDone()) {
+            // There's immediate result available.
+            updateUI(pendingResult.get());
+        } else {
+            // There's no immediate result ready, displays some progress indicator and waits for the
+            // async callback.
+//            showProgressIndicator();
+            pendingResult.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(@NonNull GoogleSignInResult result) {
+                    updateUI(result);
+//                    hideProgressIndicator();
+                }
+            });
+        }
+    }
+
+    private void updateUI(GoogleSignInResult result) {
+        View signInButton = findViewById(R.id.sign_in_button);
+        View signedInTextView = findViewById(R.id.signed_in);
+        if (result.isSuccess()) {
+            signInButton.setVisibility(GONE);
+            signedInTextView.setVisibility(VISIBLE);
+            handleIdToken(result);
+        } else {
+            signedInTextView.setVisibility(GONE);
+            signInButton.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    signIn();
+                }
+            });
+        }
     }
 
     private void configureGoogleApiClient() {
@@ -76,13 +116,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
-            GoogleSignInAccount acct = result.getSignInAccount();
-            String idToken = acct.getIdToken();
-            // TODO: Handle error... eg. empty idToken
-            SharedStorage.save(this, SharedStorage.STORAGE_KEY_ID_TOKEN, idToken);
+            handleIdToken(result);
         } else {
             toast("Sign in failed!!!");
         }
+    }
+
+    private void handleIdToken(GoogleSignInResult result) {
+        GoogleSignInAccount acct = result.getSignInAccount();
+        String idToken = acct.getIdToken();
+        // TODO: Handle error... eg. empty idToken
+        SharedStorage.save(this, SharedStorage.STORAGE_KEY_ID_TOKEN, idToken);
     }
 
     private void toast(String msg) {
@@ -96,6 +140,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
+        toast("ConnectionFailed!!!");
     }
 }

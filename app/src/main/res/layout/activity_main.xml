@@ -12,4 +12,12 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/signed_in"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:text="@string/signed_in" />
+
 </RelativeLayout>
