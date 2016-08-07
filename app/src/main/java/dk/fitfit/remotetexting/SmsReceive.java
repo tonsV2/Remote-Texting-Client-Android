@@ -19,7 +19,6 @@ import retrofit2.Response;
 public class SmsReceive extends BroadcastReceiver implements Callback<ResponseBody> {
     private final String TAG = this.getClass().getName();
     private final String format = "3gpp";
-//    private final BackendService backendService = new BackendService();
     private Context context;
 
     @Override
@@ -54,6 +53,7 @@ public class SmsReceive extends BroadcastReceiver implements Callback<ResponseBo
             Log.d(TAG, String.format("timestampReceived: %s", timestampReceived));
             // TODO: Ensure idToken is valid... if backendService.postMessage fails
             String idToken = SharedStorage.load(context, SharedStorage.STORAGE_KEY_ID_TOKEN);
+            Log.d(TAG, String.format("idToken: %s", idToken));
 
             BackendService backendService = new BackendService();
             Call<ResponseBody> call = backendService.postMessage(sender, content, timestampProvider, timestampReceived, idToken);
@@ -64,11 +64,15 @@ public class SmsReceive extends BroadcastReceiver implements Callback<ResponseBo
     @Override
     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
         int code = response.code();
+        if (code == 401) {
+            // YODOHandle unauthorized
+        }
         toast("Response.code: " + code);
     }
 
     @Override
     public void onFailure(Call<ResponseBody> call, Throwable t) {
+        // TODO: handle conditions such as unavailable network
         t.printStackTrace();
     }
 

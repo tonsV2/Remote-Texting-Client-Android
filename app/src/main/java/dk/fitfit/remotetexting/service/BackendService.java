@@ -13,11 +13,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 // TODO: do not return call objects!!! Retrofit specific stuff should be contained within this service
 public class BackendService {
+    private final String baseUrl = "http://192.168.0.18:8080";
     private final RemoteTextingService service;
 
     public BackendService() {
-        String baseUrl = "http://192.168.0.18:8080";
-
+        // TODO: Only log if we are in debug mode
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
@@ -26,7 +26,6 @@ public class BackendService {
                 .baseUrl(baseUrl)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
-//                .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
         service = retrofit.create(RemoteTextingService.class);
     }
