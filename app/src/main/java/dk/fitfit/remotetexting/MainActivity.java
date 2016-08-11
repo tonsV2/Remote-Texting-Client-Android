@@ -1,7 +1,10 @@
 package dk.fitfit.remotetexting;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -33,7 +36,7 @@ import static android.view.View.VISIBLE;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
-    private BackendService backendService;
+    private SmsObserver smsObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         setContentView(R.layout.activity_main);
         configureGoogleApiClient();
         silentSignin();
+        registerSmsObserver();
+    }
+
+    @Override
+    protected void onDestroy() {
+//        getContentResolver().unregisterContentObserver(smsObserver);
+    }
+
+    private void registerSmsObserver() {
+        Handler handler = new Handler();
+        smsObserver = new SmsObserver(handler, getApplicationContext());
+        getContentResolver().registerContentObserver(SmsObserver.URI, true, smsObserver);
     }
 
     private void silentSignin() {

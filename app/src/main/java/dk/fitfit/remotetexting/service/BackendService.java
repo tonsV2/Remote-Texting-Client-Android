@@ -34,7 +34,7 @@ public class BackendService {
         return service.postIdToken(idToken);
     }
 
-    public Call<ResponseBody> postMessage(String sender, String content, long timestampProvider, long timestampReceived, String idToken) {
+    public Call<ResponseBody> postMessage(String sender, String recipient, String content, long timestampProvider, long timestampReceived, String idToken) {
         PhoneNumberResource phoneNumberResource = new PhoneNumberResource();
         phoneNumberResource.setNumber(sender);
         MessageResource messageResource = new MessageResource();

@@ -56,7 +56,7 @@ public class SmsReceive extends BroadcastReceiver implements Callback<ResponseBo
             Log.d(TAG, String.format("idToken: %s", idToken));
 
             BackendService backendService = new BackendService();
-            Call<ResponseBody> call = backendService.postMessage(sender, content, timestampProvider, timestampReceived, idToken);
+            Call<ResponseBody> call = backendService.postMessage(sender, null, content, timestampProvider, timestampReceived, idToken);
             call.enqueue(this);
         }
     }
