@@ -47,11 +47,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         registerSmsObserver();
     }
 
-    @Override
-    protected void onDestroy() {
-//        getContentResolver().unregisterContentObserver(smsObserver);
-    }
-
     private void registerSmsObserver() {
         Handler handler = new Handler();
         smsObserver = new SmsObserver(handler, getApplicationContext());
