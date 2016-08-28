@@ -11,10 +11,6 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 interface RemoteTextingService {
-    @POST("/api/idToken")
-    @FormUrlEncoded
-    Call<ResponseBody> postIdToken(@Field("idToken") String idToken);
-
     @POST("/api/messages")
     Call<ResponseBody> postMessage(@Body MessageResource message, @Query("idToken") String idToken);
 }

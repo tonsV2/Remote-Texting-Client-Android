@@ -1,7 +1,5 @@
 package dk.fitfit.remotetexting.service;
 
-import java.io.IOException;
-
 import dk.fitfit.remotetexting.resource.MessageResource;
 import dk.fitfit.remotetexting.resource.PhoneNumberResource;
 import okhttp3.OkHttpClient;
@@ -28,10 +26,6 @@ public class BackendService {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         service = retrofit.create(RemoteTextingService.class);
-    }
-
-    public Call<ResponseBody> postIdToken(String idToken) throws IOException {
-        return service.postIdToken(idToken);
     }
 
     public Call<ResponseBody> postMessage(String sender, String recipient, String content, long timestampProvider, long timestampReceived, String idToken) {
