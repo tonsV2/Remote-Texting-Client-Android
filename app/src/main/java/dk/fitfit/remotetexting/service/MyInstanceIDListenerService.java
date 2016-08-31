@@ -1,8 +1,6 @@
 package dk.fitfit.remotetexting.service;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.iid.InstanceIDListenerService;
 import com.google.firebase.iid.FirebaseInstanceId;
