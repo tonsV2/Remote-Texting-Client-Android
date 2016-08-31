@@ -11,6 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 // TODO: do not return call objects!!! Retrofit specific stuff should be contained within this service
 public class BackendService {
+    private static final String TAG = BackendService.class.getSimpleName();
     private final String baseUrl = "http://192.168.0.18:8080";
     private final RemoteTextingService service;
 
@@ -37,5 +38,9 @@ public class BackendService {
         messageResource.setTimestampProvider(timestampProvider);
         messageResource.setTimestampReceived(timestampReceived);
         return service.postMessage(messageResource, idToken);
+    }
+
+    public Call<ResponseBody> putFcmToken(String fcmToken, String idToken) {
+        return service.putFcmToken(fcmToken, idToken);
     }
 }

@@ -1,10 +1,8 @@
 package dk.fitfit.remotetexting;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -20,6 +18,7 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +26,10 @@ import java.io.InputStreamReader;
 
 import dk.fitfit.remotetexting.service.BackendService;
 import dk.fitfit.remotetexting.utils.SharedStorage;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.view.View.GONE;
 import static android.view.View.OnClickListener;
@@ -34,6 +37,7 @@ import static android.view.View.VISIBLE;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+    private static final String TAG = MainActivity.class.getSimpleName();
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
     private SmsObserver smsObserver;
@@ -45,6 +49,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         configureGoogleApiClient();
         silentSignin();
         registerSmsObserver();
+        postFcmToken();
+    }
+
+    private void postFcmToken() {
+        String fcmToken = FirebaseInstanceId.getInstance().getToken();
+        String idToken = SharedStorage.load(this, SharedStorage.STORAGE_KEY_ID_TOKEN);
+        BackendService backendService = new BackendService();
+        Call<ResponseBody> call = backendService.putFcmToken(fcmToken, idToken);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                toast("FMC Token success!");
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                toast("FMC Token ConnectionFailed!!!");
+            }
+        });
     }
 
     private void registerSmsObserver() {
@@ -149,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         toast("ConnectionFailed!!!");
     }
 }
