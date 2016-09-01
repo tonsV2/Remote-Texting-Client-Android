@@ -11,9 +11,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static dk.fitfit.remotetexting.MainActivity.TAG;
+
 
 public class MyInstanceIDListenerService extends InstanceIDListenerService {
-    private static final String TAG = MyInstanceIDListenerService.class.getSimpleName();
 
     @Override
     public void onTokenRefresh() {

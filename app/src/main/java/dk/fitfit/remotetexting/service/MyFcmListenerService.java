@@ -7,16 +7,17 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
 
+import static dk.fitfit.remotetexting.MainActivity.TAG;
+
 
 public class MyFcmListenerService extends FirebaseMessagingService {
-    private static final String TAG = MyFcmListenerService.class.getSimpleName();
-
     @Override
     public void onMessageReceived(RemoteMessage message) {
-//        String from = message.getFrom();
+        String from = message.getFrom();
+        Log.d(TAG, "FCM From: " + from);
         Map<String, String> data = message.getData();
         for (Map.Entry<String, String> entry : data.entrySet()) {
-            Log.i(TAG, entry.getKey() + ": " + entry.getValue());
+            Log.d(TAG, entry.getKey() + ": " + entry.getValue());
         }
     }
 }

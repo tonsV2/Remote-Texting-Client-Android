@@ -37,7 +37,7 @@ import static android.view.View.VISIBLE;
 
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private static final String TAG = MainActivity.class.getSimpleName();
+    public static final String TAG = "RemoteTextingClient";
     private GoogleApiClient mGoogleApiClient;
     private static final int RC_SIGN_IN = 9001;
     private SmsObserver smsObserver;
