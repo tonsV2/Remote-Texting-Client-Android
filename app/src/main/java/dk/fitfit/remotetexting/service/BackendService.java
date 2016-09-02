@@ -6,6 +6,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -45,5 +47,35 @@ public class BackendService {
 
     public Call<MessageResource> getMessage(String id, String idToken) {
         return service.getMessage(id, idToken);
+    }
+
+    public void messageSent(String id, long unixTime, String idToken) {
+        Call<ResponseBody> call = service.messageSent(id, unixTime, idToken);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                // TODO: Log, toast... something?
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void messageDelivered(String id, long unixTime, String idToken) {
+        Call<ResponseBody> call = service.messageDelivered(id, unixTime, idToken);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                // TODO: Log, toast... something?
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 }

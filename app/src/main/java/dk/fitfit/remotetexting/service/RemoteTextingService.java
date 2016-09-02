@@ -20,4 +20,10 @@ interface RemoteTextingService {
 
     @GET("/api/messages/{id}/msg")
     Call<MessageResource> getMessage(@Path("id") String id, @Query("idToken") String idToken);
+
+    @PUT("/api/messages/{id}/sent/{ts}")
+    Call<ResponseBody> messageSent(@Path("id") String id, @Path("ts") long ts, @Query("idToken") String idToken);
+
+    @PUT("/api/messages/{id}/delivered/{ts}")
+    Call<ResponseBody> messageDelivered(@Path("id") String id, @Path("ts") long ts, @Query("idToken") String idToken);
 }

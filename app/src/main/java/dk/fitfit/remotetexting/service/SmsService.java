@@ -21,6 +21,7 @@ public class SmsService implements Callback<MessageResource> {
     private final Context context;
     private final BackendService backendService;
     private String messageId;
+    private String idToken;
 
     public SmsService(Context context) {
         this.context = context;
@@ -29,7 +30,7 @@ public class SmsService implements Callback<MessageResource> {
 
     public void send(String messageId) {
         this.messageId = messageId;
-        String idToken = SharedStorage.load(context, SharedStorage.STORAGE_KEY_ID_TOKEN);
+        idToken = SharedStorage.load(context, SharedStorage.STORAGE_KEY_ID_TOKEN);
         Call<MessageResource> call = backendService.getMessage(messageId, idToken);
         call.enqueue(this);
     }
@@ -52,6 +53,9 @@ public class SmsService implements Callback<MessageResource> {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "SMS sent intent received(" + messageId + ")");
+                // TODO: Get ts from intent?
+                long unixTime = System.currentTimeMillis() / 1000L;
+                backendService.messageSent(messageId, unixTime, idToken);
             }
         }, new IntentFilter(SENT_ACTION));
 
@@ -59,6 +63,9 @@ public class SmsService implements Callback<MessageResource> {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "SMS delivered intent received(" + messageId + ")");
+                // TODO: Get ts from intent?
+                long unixTime = System.currentTimeMillis() / 1000L;
+                backendService.messageDelivered(messageId, unixTime, idToken);
             }
         }, new IntentFilter(DELIVERED_ACTION));
 
