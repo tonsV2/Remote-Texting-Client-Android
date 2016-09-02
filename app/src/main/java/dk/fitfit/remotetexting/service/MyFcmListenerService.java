@@ -25,7 +25,6 @@ public class MyFcmListenerService extends FirebaseMessagingService {
                 SmsService smsService = new SmsService(getApplicationContext());
                 // Get to and content from server by messageId
                 smsService.send(data.get("messageId"));
-                smsService.send(data.get("to"), data.get("message"));
                 break;
         }
     }

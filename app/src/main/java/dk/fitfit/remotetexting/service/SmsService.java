@@ -1,8 +1,10 @@
 package dk.fitfit.remotetexting.service;
 
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.telephony.SmsManager;
 import android.util.Log;
 
@@ -16,23 +18,30 @@ public class SmsService {
         this.context = context;
     }
 
-    public void send(String to, String message) {
-        Log.d(TAG, to + ": " + message);
-
-        String callbackId = "hash of to and message";
-        String intentAction = TAG + "-" + callbackId;  // callbackId is unique
-        Intent intent = new Intent(intentAction);
-        intent.putExtra("phoneNumber", to);
-        intent.putExtra("callbackId", callbackId);
-        intent.putExtra("message", message);
-
-        PendingIntent sentIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-
-        SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(to, null, message, sentIntent, null);
-    }
-
     public void send(String messageId) {
 
+        String callbackId = "hash of to and message";
+        String SENT_ACTION = "SENT" + callbackId;
+        String DELIVERED_ACTION = "DELIVERED" + callbackId;
+
+        PendingIntent sentIntent = PendingIntent.getBroadcast(context, 0, new Intent(SENT_ACTION), 0);
+        PendingIntent deliveryIntent = PendingIntent.getBroadcast(context, 0, new Intent(DELIVERED_ACTION), 0);
+
+        context.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "SMS sent intent received.");
+            }
+        }, new IntentFilter(SENT_ACTION));
+
+        context.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "SMS delivered intent received.");
+            }
+        }, new IntentFilter(DELIVERED_ACTION));
+
+        SmsManager smsManager = SmsManager.getDefault();
+//        smsManager.sendTextMessage(to, null, message, sentIntent, deliveryIntent);
     }
 }
