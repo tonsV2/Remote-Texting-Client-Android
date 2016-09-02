@@ -2,10 +2,19 @@ package dk.fitfit.remotetexting.resource;
 
 
 public class MessageResource {
+	private PhoneNumberResource to;
 	private PhoneNumberResource from;
 	private String content;
 	private long timestampProvider;
 	private long timestampReceived;
+
+	public PhoneNumberResource getTo() {
+		return to;
+	}
+
+	public void setTo(PhoneNumberResource to) {
+		this.to = to;
+	}
 
 	public PhoneNumberResource getFrom() {
 		return from;

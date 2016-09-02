@@ -30,10 +30,9 @@ public class BackendService {
     }
 
     public Call<ResponseBody> postMessage(String sender, String recipient, String content, long timestampProvider, long timestampReceived, String idToken) {
-        PhoneNumberResource phoneNumberResource = new PhoneNumberResource();
-        phoneNumberResource.setNumber(sender);
         MessageResource messageResource = new MessageResource();
-        messageResource.setFrom(phoneNumberResource);
+        messageResource.setFrom(new PhoneNumberResource(sender));
+        messageResource.setTo(new PhoneNumberResource(recipient));
         messageResource.setContent(content);
         messageResource.setTimestampProvider(timestampProvider);
         messageResource.setTimestampReceived(timestampReceived);
@@ -42,5 +41,9 @@ public class BackendService {
 
     public Call<ResponseBody> putFcmToken(String fcmToken, String idToken) {
         return service.putFcmToken(fcmToken, idToken);
+    }
+
+    public Call<MessageResource> getMessage(String id, String idToken) {
+        return service.getMessage(id, idToken);
     }
 }
